@@ -9,7 +9,8 @@ class App extends Component {
       email: "",
       password: "",
       effectualMessage: "",
-      isError: false,
+      emailFormatError: false,
+      passwordFormatError: false,
     }
 
 //============================================================================================================//
@@ -33,26 +34,64 @@ this.setState({
   
   if(isEmail){ 
     this.setState({
-      isError: false,
+      emailFormatError: false,
       effectualMessage: "",
     })
   }else {
-    console.log('email email; emal')
     this.setState({
-      isError: true,
+      emailFormatError: true,
       effectualMessage: `Please enter your email address in desired format: yourname@example.com  `
     })
   }
 } )}
 
+//============================================================================================================//
+//============================================================================================================//
+handelOnChangePassword = (event)=>{
+  this.setState({
+
+    [event.target.name]: event.target.value,
+  }, ()=>{
+    const {password} = this.state;
+
+    // check if given string matches
+    let isPassword = validator.matches(password, "^(?=.*?[A-Z])(?=.*?[a-z])(?=.*?[0-9])(?=.*?[#?!@$%^&*-]).{8,}$" );
+
+    // if password format-validator results to true, state remains normal
+    // otherwise alert should prompt user instructing the accepted validated password format
+    if(isPassword){
+      this.setState({
+        passwordFormatError: false,
+        effectualMessage: ''
+      })
+    } else {
+      this.setState({
+        passwordFormatError: true,
+        effectualMessage: `Password must contain: 
+        - A minimum of 8 characters
+        - 1 Uppercase Letter,  
+        - 1 Lowercase Letter,
+        - 1 Number,  
+        - and 1 of these special characters " #?!@$%^&*_ "`
+      });
+    }
+
+  });
+}
+
+
+//============================================================================================================//
+//============================================================================================================//
+
+
 render () { 
 
-const {effectualMessage, isError}= this.state
+const {effectualMessage, emailFormatError, passwordFormatError}= this.state
 
   let showSignUpComponent = <form>
             <div className="login-info-box" >
             <h2>Sign Up</h2>
-            {isError ? <div>{effectualMessage}</div>: ""}
+            {emailFormatError  ? <div>{effectualMessage}</div>: ""}
             <br/>
                 <input 
                 type="text"
@@ -61,10 +100,14 @@ const {effectualMessage, isError}= this.state
                 onChange={this.handleOnChangeEmail}
                 />
                 {" "}<br />
+
+                
+              {passwordFormatError ? <div>{effectualMessage}</div>: ""}
                 <input
                 type="text"
                 placeholder="enter password"
                 name="password"
+                onChange={this.handelOnChangePassword}
                 />
                 {" "}
                 <br />
