@@ -1,25 +1,53 @@
-import logo from './logo.svg';
+import React, { Component } from "react";
 import './App.css';
 
-function App() {
+class App extends Component {
+
+
+    state = {
+      email: "",
+      password: "",
+    }
+
+//============================================================================================================//
+//============================================================================================================//
+
+handleOnChangeEmail = (event)=>{
+// set email state to whatever os updated in the email input
+this.setState({
+  [event.target.name]: event.target.value,
+} )}
+
+render () { 
+  let showSignUpComponent = <form>
+            <div className="login-info-box" >
+            <h2>Sign Up</h2>
+                <input 
+                type="text"
+                placeholder="enter email"
+                name="email"
+                onChange={this.handleOnChangeEmail}
+                />
+                {" "}<br />
+                <input
+                type="text"
+                placeholder="enter password"
+                name="password"
+                />
+                {" "}
+                <br />
+                <button>Sign Up</button>
+            </div>
+          </form>
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
-  );
-}
+
+    <div>
+    {showSignUpComponent}
+
+  </div>
+    )
+
+  
+}}
 
 export default App;
