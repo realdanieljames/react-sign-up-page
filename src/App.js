@@ -9,8 +9,9 @@ class App extends Component {
       email: "",
       password: "",
       effectualMessage: "",
-      emailFormatError: false,
-      passwordFormatError: false,
+      targetField: "",
+      isError: false,
+      // isError: false,
     }
 
 //============================================================================================================//
@@ -24,6 +25,8 @@ this.setState({
   //grabbing the email in our state so we can work with it in verifying our inputs
   const {email} = this.state;
 
+  console.log(event.target.name)
+
   // validator.isEmail to follow if inputted string becomes an accepted email format
   // set to isEmail
   let isEmail = validator.isEmail(email);
@@ -34,13 +37,15 @@ this.setState({
   
   if(isEmail){ 
     this.setState({
-      emailFormatError: false,
+      isError: false,
       effectualMessage: "",
+      targetField: "email",
     })
   }else {
     this.setState({
-      emailFormatError: true,
-      effectualMessage: `Please enter your email address in desired format: yourname@example.com  `
+      isError: true,
+      effectualMessage: `Please enter your email address in desired format: yourname@example.com  `,
+      targetField: "email",
     })
   }
 } )}
@@ -61,37 +66,95 @@ handelOnChangePassword = (event)=>{
     // otherwise alert should prompt user instructing the accepted validated password format
     if(isPassword){
       this.setState({
-        passwordFormatError: false,
-        effectualMessage: ''
+        isError: false,
+        effectualMessage: '',
+        targetField: "password"
       })
     } else {
       this.setState({
-        passwordFormatError: true,
-        effectualMessage: `Password must contain: 
-        - A minimum of 8 characters
+        isError: true,
+        effectualMessage: `Password must contain A minimum of 8 characters, including:
         - 1 Uppercase Letter,  
         - 1 Lowercase Letter,
         - 1 Number,  
-        - and 1 of these special characters " #?!@$%^&*_ "`
+        - and 1 of these special characters " #?!@$%^&*_ "`,
+        targetField: "password"
+      
       });
     }
 
   });
 }
 
+//============================================================================================================//
+//============================================================================================================//
+handleOnSubmit = async (event) => {
+  event.preventDefault();
+
+  // console.log(event)
+const {email, password} = this.state;
+
+if(validator.isEmpty(email) && validator.isEmpty(password)) {
+  this.setState({
+    isError:  true,
+    effectualMessage: " Cannot have empty Email and Password",
+    targetField: "submit-button"
+  });
+  return;
+} else {
+  this.setState({
+    isError: false,
+    effectualMessage: "",
+    targetField: "submit-button"
+  });
+}
+
+if(validator.isEmpty(email)){
+  this.setState({
+    isError: true,
+    effectualMessage: "Cannot have empty email",
+    targetField: "submit-button"
+  })
+} else {
+  this.setState({
+    isError: false,
+    effectualMessage: "",
+    targetField: "submit-button"
+  });
+}
+
+
+if(validator.isEmpty(password)){
+  this.setState({
+    isError: true,
+    effectualMessage: "Cannot have empty password",
+    targetField: "submit-button"
+  });
+} else {
+  this.setState({
+    isError:false,
+    effectualMessage:"",
+    targetField: "submit-button"
+  })
+}
+
+};
+
+
 
 //============================================================================================================//
 //============================================================================================================//
-
 
 render () { 
 
-const {effectualMessage, emailFormatError, passwordFormatError}= this.state
+const {effectualMessage, isError, targetField}= this.state
 
-  let showSignUpComponent = <form>
+  let showSignUpComponent = <form onSubmit={this.handleOnSubmit}>
             <div className="login-info-box" >
             <h2>Sign Up</h2>
-            {emailFormatError  ? <div>{effectualMessage}</div>: ""}
+            
+            {isError && targetField ==="email"  ? <div className="effectual-message">{effectualMessage}</div>: ""}
+            {isError && targetField ==="submit-button" ? <div className="effectual-message">{effectualMessage}</div>: ""}
             <br/>
                 <input 
                 type="text"
@@ -102,7 +165,7 @@ const {effectualMessage, emailFormatError, passwordFormatError}= this.state
                 {" "}<br />
 
                 
-              {passwordFormatError ? <div>{effectualMessage}</div>: ""}
+              {isError && targetField === "password" ? <div className="effectual-message">{effectualMessage}</div>: ""}
                 <input
                 type="text"
                 placeholder="enter password"
@@ -111,6 +174,7 @@ const {effectualMessage, emailFormatError, passwordFormatError}= this.state
                 />
                 {" "}
                 <br />
+
                 <button>Sign Up</button>
             </div>
           </form>
